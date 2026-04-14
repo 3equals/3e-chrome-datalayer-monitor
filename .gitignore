@@ -1,0 +1,5 @@
+node_modules/
+*.sql
+.env
+build/haproxy/dhparam
+build/haproxy/certs.zip

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dataLayer Monitor</title>
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <svg class="header-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="7" height="7" rx="1" fill="#4fc3f7"/>
+        <rect x="11" y="2" width="7" height="7" rx="1" fill="#4fc3f7" opacity="0.6"/>
+        <rect x="2" y="11" width="7" height="7" rx="1" fill="#4fc3f7" opacity="0.6"/>
+        <rect x="11" y="11" width="7" height="7" rx="1" fill="#4fc3f7" opacity="0.3"/>
+      </svg>
+      <span class="header-title">dataLayer Monitor</span>
+    </div>
+    <div class="header-right">
+      <span id="push-count" class="push-count" title="Total pushes recorded">0</span>
+
+      <div class="search-wrap">
+        <svg viewBox="0 0 14 14" fill="none" class="search-icon">
+          <circle cx="5.5" cy="5.5" r="3.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M8.5 8.5L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        <input id="search-input" class="search-input" type="text" placeholder="Filter pushes…" autocomplete="off" spellcheck="false">
+      </div>
+
+      <button id="btn-scroll-lock" class="btn-icon active" title="Auto-scroll to latest push">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 13h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button id="btn-expand-all" class="btn-icon" title="Expand all cards">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 2h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M4 14h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <button id="btn-clear" class="btn-icon" title="Clear history">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 4h12M6 4V2h4v2M5 4v9a1 1 0 001 1h4a1 1 0 001-1V4H5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn active" data-tab="history" role="tab" aria-selected="true">Push History</button>
+    <button class="tab-btn" data-tab="state" role="tab" aria-selected="false">Current State</button>
+  </div>
+
+  <!-- Push History panel -->
+  <div id="panel-history" class="panel active" role="tabpanel">
+    <div id="history-empty" class="empty-state">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="20" stroke="#3c3c3c" stroke-width="2"/>
+        <path d="M16 24h16M24 16v16" stroke="#3c3c3c" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <p>No pushes recorded yet.</p>
+      <p class="hint">Interact with the page to trigger <code>dataLayer</code> pushes, or reload the tab if you opened DevTools after page load.</p>
+    </div>
+    <div id="history-list"></div>
+    <div id="no-results" class="empty-state" style="display:none">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="14" stroke="#3c3c3c" stroke-width="2"/>
+        <path d="M30 30l10 10" stroke="#3c3c3c" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <p>No pushes match your filter.</p>
+    </div>
+  </div>
+
+  <!-- Current State panel -->
+  <div id="panel-state" class="panel" role="tabpanel">
+    <div id="state-empty" class="empty-state">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="20" stroke="#3c3c3c" stroke-width="2"/>
+        <path d="M16 24h16M24 16v16" stroke="#3c3c3c" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <p>No dataLayer state yet.</p>
+      <p class="hint">Pushes will appear here as they are recorded.</p>
+    </div>
+    <pre id="state-json" class="state-json"></pre>
+  </div>
+
+  <script src="panel.js"></script>
+</body>
+</html>
