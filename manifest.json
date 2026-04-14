@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "dataLayer Monitor",
+  "version": "1.4.0",
+  "description": "Monitors and displays Google Tag Manager dataLayer pushes in real time.",
+  "author": "Nyco Agung (nyco.a@klyp.co)",
+
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "devtools_page": "src/devtools/devtools.html",
+
+  "action": {
+    "default_title": "Open DevTools → dataLayer tab",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "background": {
+    "service_worker": "src/background/service-worker.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/content-script.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["src/injected/page-script.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
