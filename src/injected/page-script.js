@@ -19,8 +19,11 @@
   var SOURCE_TAG = 'datalayer-monitor';
 
   function post(type, payload) {
+    var safe;
+    try { safe = JSON.parse(JSON.stringify(payload)); }
+    catch (e) { safe = { __unserializable: true }; }
     window.postMessage(
-      { source: SOURCE_TAG, type: type, payload: payload, timestamp: Date.now() },
+      { source: SOURCE_TAG, type: type, payload: safe, timestamp: Date.now() },
       '*'
     );
   }
