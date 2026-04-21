@@ -18,14 +18,28 @@
 
   var SOURCE_TAG = 'datalayer-monitor';
 
+  function safeFallback(value) {
+    try {
+      return { __unserializable: true, keys: Object.keys(value || {}) };
+    } catch (e) {
+      return { __unserializable: true, keys: [] };
+    }
+  }
+
   function post(type, payload) {
-    var safe;
-    try { safe = JSON.parse(JSON.stringify(payload)); }
-    catch (e) { safe = { __unserializable: true }; }
-    window.postMessage(
-      { source: SOURCE_TAG, type: type, payload: safe, timestamp: Date.now() },
-      '*'
-    );
+    var msg = { source: SOURCE_TAG, type: type, payload: payload, timestamp: Date.now() };
+    try {
+      window.postMessage(msg, '*');
+    } catch (e) {
+      // Structured clone failed — JSON-sanitise the payload and retry.
+      var safe;
+      try { safe = JSON.parse(JSON.stringify(payload)); }
+      catch (_) { safe = safeFallback(payload); }
+      window.postMessage(
+        { source: SOURCE_TAG, type: type, payload: safe, timestamp: Date.now() },
+        '*'
+      );
+    }
   }
 
   // Ensure dataLayer exists — GTM will reuse this array.
@@ -33,15 +47,9 @@
 
   // Always snapshot current items so the panel gets the full state even when
   // this script is re-injected after the page has already loaded.
-  // Serialize each item through JSON to strip non-cloneable values (e.g.
-  // Arguments objects that GTM or page scripts may have pushed into dataLayer).
   var existing = window.dataLayer.slice();
   if (existing.length > 0) {
-    var safeExisting = existing.map(function (item) {
-      try { return JSON.parse(JSON.stringify(item)); }
-      catch (e) { return { __unserializable: true, keys: Object.keys(item || {}) }; }
-    });
-    post('DATALAYER_INIT', safeExisting);
+    post('DATALAYER_INIT', existing);
   }
 
   // Guard: only install the push interceptor once per page.
@@ -54,12 +62,7 @@
       var args = Array.prototype.slice.call(arguments);
       var result = inner.apply(this, args);
       for (var i = 0; i < args.length; i++) {
-        try {
-          var serialised = JSON.parse(JSON.stringify(args[i]));
-          post('DATALAYER_PUSH', serialised);
-        } catch (e) {
-          post('DATALAYER_PUSH', { __unserializable: true, keys: Object.keys(args[i] || {}) });
-        }
+        post('DATALAYER_PUSH', args[i]);
       }
       return result;
     };
